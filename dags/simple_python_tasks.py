@@ -1,3 +1,4 @@
+import time
 from datetime import datetime, timedelta
 from airflow.utils.dates import days_ago
 from airflow import DAG
@@ -7,8 +8,15 @@ default_args = {
     'owner':'nshk'
 }
 
-def python_task():
-    print('The Python task has been executed!')
+def task1():
+    print('The task1 has been executed!')
+
+
+def task2():
+    time.sleep(4)
+    print('The task2 has been executed!')
+
+    print('The task1 has been executed!')
 
 with DAG(
     dag_id = 'simple_python_tasks',
@@ -18,10 +26,14 @@ with DAG(
     schedule_interval='@once',
     tags=['python','test']
 ) as dag:
-    task = PythonOperator(
-        task_id='python_task',
-        python_callable=python_task
+    task1 = PythonOperator(
+        task_id='task1',
+        python_callable=task1
+    )
+    task2 = PythonOperator(
+        task_id='task2',
+        python_callable=task2
     )
 
-task
+task1 >> task2
 
