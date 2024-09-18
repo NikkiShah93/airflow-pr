@@ -15,9 +15,14 @@ with DAG(
     tags=['bash','example']
 ) as dag:
 
-    task = BashOperator(
-        task_id = 'simple_bash_task',
-        bash_command='echo Hello World!'
+    task1 = BashOperator(
+        task_id = 'simple_bash_task1',
+        bash_command='echo task1 has been executed'
     )
 
-task
+    task2 = BashOperator(
+        task_id='simple_bash_task2',
+        bash_command='echo task2 has been executed'
+    )
+
+task1 >> task2
