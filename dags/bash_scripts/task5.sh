@@ -1,0 +1,1 @@
+echo Task 5 has been executed!

@@ -45,8 +45,6 @@ with DAG(
         bash_command='echo last task has been executed!'
     )
 
-t1 >> t2
-t1 >> t3
+t1 >> [t2, t3]
 
-t4 << t2
-t4 << t3
+t4 << [t2, t3]
