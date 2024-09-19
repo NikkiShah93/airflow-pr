@@ -5,6 +5,7 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import BranchPythonOperator, PythonVirtualenvOperator, is_venv_installed
 from airflow.models import Variable
+from airflow.decorators import task
 
 REGION = 'northwest'
 CWD = os.getcwd()
