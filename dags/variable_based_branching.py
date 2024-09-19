@@ -5,7 +5,6 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python import BranchPythonOperator, PythonVirtualenvOperator, is_venv_installed
 from airflow.models import Variable
-from airflow.decorators import task
 
 REGION = 'northwest'
 CWD = os.getcwd()
@@ -44,7 +43,7 @@ def branch_func(var_name):
     variable = Variable.get(var_name)
     if variable.startswith('filter'):
         return variable
-    elif variable == 'groupby':
+    elif variable == 'groupby_task':
         return 'groupby_task'
 def null_remover(**kwargs):
     import pandas as pd
