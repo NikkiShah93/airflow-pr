@@ -55,8 +55,8 @@ def branch_func(var_name):
     print(variable)
     if variable.startswith('filter'):
         return f'filtering.{variable}'
-    elif variable == 'groupby_task':
-        return f'grouping.groupby_task'
+    elif variable.startswith('groupby'):
+        return f'grouping.{variable}'
 def null_remover(**kwargs):
     import pandas as pd
     RAW_FILE_PATH = kwargs['RAW_FILE_PATH']
