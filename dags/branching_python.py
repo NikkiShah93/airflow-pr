@@ -33,7 +33,7 @@ with DAG(
         python_callable=random_num_picker
     )
     branch = BranchPythonOperator(
-        task_id='even_odd_branch',
+        task_id='branch',
         python_callable=even_odd_branch
     )
     even_num = PythonOperator(
