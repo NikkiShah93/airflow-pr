@@ -62,13 +62,26 @@ def filter_region(**kwargs):
     df = pd.read_csv(f'{CLEAN_FILE_PATH}/clean_file.csv')
     df = df[df['region'] == region]
     df.to_csv(f'{REPORT_FILE_PATH}/filtered_by_region.csv', index=False)
-def groupby(**kwargs):
+def filter_age(**kwargs):
+    import pandas as pd
+    CLEAN_FILE_PATH = kwargs['CLEAN_FILE_PATH']
+    REPORT_FILE_PATH = kwargs['REPORT_FILE_PATH']
+    age = kwargs['AGE']
+    df = pd.read_csv(f'{CLEAN_FILE_PATH}/clean_file.csv')
+    df = df[df['age'] >= age]
+    df.to_csv(f'{REPORT_FILE_PATH}/filtered_by_region.csv', index=False)
+def groupby_smoker(**kwargs):
     import pandas as pd
     CLEAN_FILE_PATH = kwargs['CLEAN_FILE_PATH']
     REPORT_FILE_PATH = kwargs['REPORT_FILE_PATH']
     df = pd.read_csv(f'{CLEAN_FILE_PATH}/clean_file.csv')
     smoker_df = df.groupby('smoker')[['age', 'bmi','charges']].mean().reset_index()
     smoker_df.to_csv(f'{REPORT_FILE_PATH}/grouped_by_smoker.csv', index=False)
+def groupby_gender(**kwargs):
+    import pandas as pd
+    CLEAN_FILE_PATH = kwargs['CLEAN_FILE_PATH']
+    REPORT_FILE_PATH = kwargs['REPORT_FILE_PATH']
+    df = pd.read_csv(f'{CLEAN_FILE_PATH}/clean_file.csv')
     gender_df = df.groupby('sex')[['age', 'bmi','charges']].mean().reset_index()
     gender_df.to_csv(f'{REPORT_FILE_PATH}/grouped_gender.csv', index=False)
 with DAG(
@@ -112,14 +125,27 @@ with DAG(
             system_site_packages=False,
             op_kwargs=func_args
         )
-        groupby_task = PythonVirtualenvOperator(
-            task_id='groupby_task',
-            python_callable=groupby,
+        filter_by_age = PythonVirtualenvOperator(
+            task_id='filter_by_age',
+            python_callable=filter_age,
             requirements=['pandas'],
-            provide_context=True,
             system_site_packages=False,
             op_kwargs=func_args
         )
+        groupby_smoker = PythonVirtualenvOperator(
+            task_id='group_by_smoker',
+            python_callable=groupby_smoker,
+            requirements=['pandas'],
+            system_site_packages=False,
+            op_kwargs=func_args
+        )
+        groupby_gender = PythonVirtualenvOperator(
+                task_id='group_by_gender',
+                python_callable=groupby_gender,
+                requirements=['pandas'],
+                system_site_packages=False,
+                op_kwargs=func_args
+            )
         
 
-    extract_date >> remove_nulls >> branch >> [groupby_task,filter_by_region]
+    extract_date >> remove_nulls >> branch >> [groupby_gender, groupby_smoker,filter_by_region, filter_by_age]
